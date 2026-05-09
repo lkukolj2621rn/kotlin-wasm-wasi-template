@@ -56,5 +56,7 @@ fun readLine(): String? {
 }
 
 // We need it to run WasmEdge with the _initialize function
+@Suppress("unused")
+@OptIn(ExperimentalWasmInterop::class)
 @WasmExport
 fun dummy() {}
