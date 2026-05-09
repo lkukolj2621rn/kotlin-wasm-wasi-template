@@ -15,21 +15,21 @@ fun main() {
 
 @ExperimentalWasmInterop
 @WasmImport("wasi_snapshot_preview1", "fd_read")
-private external fun fdRead(fd: Int, ptr: UInt, arraySize: Int, errnoPtr: UInt): Int
+private external fun fdRead(fd: Int, ptr: UInt, arraySize: Int, countPtr: UInt): Int
 
 
 @OptIn(ExperimentalWasmInterop::class, UnsafeWasmMemoryApi::class)
 fun readChar(): Char? {
     withScopedMemoryAllocator {
         allocator ->
-        val ptr = allocator.allocate(8 + 2 + 1)
-        val errnoPtr = ptr + 8
-        val charPtr = errnoPtr + 2
+        val ptr = allocator.allocate(8 + 4 + 1)
+        val countPtr = ptr + 8
+        val charPtr = countPtr + 4
         ptr.storeInt(charPtr.address.toInt()) // buf
         (ptr + 4).storeInt(1) // buf_len
-        val count = fdRead(0, ptr.address, 1, errnoPtr.address)
-        val errno = errnoPtr.loadShort()
-        if (errno != 0.toShort())
+        val errno = fdRead(0, ptr.address, 1, countPtr.address)
+        val count = countPtr.loadInt()
+        if (errno != 0)
             throw RuntimeException("Read errno: $errno")
         if (count == 0)
             return null
