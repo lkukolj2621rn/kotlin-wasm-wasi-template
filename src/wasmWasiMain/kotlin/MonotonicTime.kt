@@ -4,9 +4,10 @@ import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
 
 fun main() {
-    println("Hello from Kotlin via WASI")
-    println("Current 'realtime' timestamp is: ${wasiRealTime()}")
-    println("Current 'monotonic' timestamp is: ${wasiMonotonicTime()}")
+    while (true) {
+        val line = readlnOrNull() ?: break
+        println("Wasm received: $line")
+    }
 }
 
 @WasmImport("wasi_snapshot_preview1", "clock_time_get")
