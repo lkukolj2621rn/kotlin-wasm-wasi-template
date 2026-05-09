@@ -488,3 +488,19 @@ tasks.withType<NodeJsExec>().all {
         )
     }
 }
+
+tasks.getByName<NodeJsExec>("wasmWasiNodeProductionRun") {
+    val runWasmTask = createWasmtimeExec(
+        inputFileProperty,
+        "runWasm",
+        group,
+        "dummy"
+    )
+
+    runWasmTask.configure {
+        standardInput = System.`in`
+        dependsOn(
+            project.provider { this@getByName.taskDependencies }
+        )
+    }
+}
